@@ -1,0 +1,85 @@
+density:
+  weights:
+    building_count: 0.4
+    built_area_pct: 0.6
+  thresholds:
+    low: 0.0
+    moderate: 0.07
+    high: 0.34
+  recommendations:
+    high: Area is densely populated. Consider limiting further construction.
+    moderate: Moderate building density. Suitable for controlled expansion.
+    low: Low building density. Potential for development.
+green_coverage:
+  weights:
+    vegetation_pct: 1.0
+    playground_pct: 0.5
+  thresholds:
+    insufficient: 0.1
+    low: 0.08
+    adequate: 0.36
+    good: 0.66
+  target_pct: 0.36
+  recommendations:
+    insufficient: Critical shortage of green spaces.
+    low: Below recommended green coverage.
+    adequate: Green coverage meets minimum standards.
+    good: Excellent green coverage.
+flood_risk:
+  weights:
+    water_proximity: 0.5
+    water_area_pct: 0.3
+    building_water_ratio: 0.2
+  thresholds:
+    low: 0.25
+    moderate: 0.5
+    high: 0.7
+  min_safe_distance_px: 50
+  recommendations:
+    high: High flood risk. Recommend buffer zones and flood barriers.
+    moderate: Moderate flood risk. Consider drainage improvements.
+    low: Low flood risk.
+infrastructure:
+  weights:
+    road_coverage_pct: 0.5
+    intersection_count: 0.3
+    road_connectivity: 0.2
+  thresholds:
+    poor: 0.03
+    moderate: 0.11
+    good: 0.32
+  recommendations:
+    poor: Poor road connectivity. Recommend expanding road network.
+    moderate: Basic road infrastructure. Consider secondary roads.
+    good: Good road connectivity.
+planning:
+  suitability_weights:
+    density: 0.25
+    green_coverage: 0.25
+    flood_risk: 0.25
+    infrastructure: 0.25
+  suitability_labels:
+  - label: Not Suitable
+    range:
+    - 0.0
+    - 0.3
+  - label: Needs Improvement
+    range:
+    - 0.3
+    - 0.5
+  - label: Moderately Suitable
+    range:
+    - 0.5
+    - 0.7
+  - label: Suitable
+    range:
+    - 0.7
+    - 0.85
+  - label: Highly Suitable
+    range:
+    - 0.85
+    - 1.0
+normalization:
+  building_count_max: 122
+  intersection_count_max: 10
+  image_area_px: 262144

@@ -1,0 +1,78 @@
+============================================================
+  Smart City Planning Decision Support System — API Server
+============================================================
+  Config dir: /Users/krishdave/Documents/Krish Stuff/8th Semester/Spatial Computing/Project/SpatComp_Project/EarthVQA_SpatComp/smart_city/config
+  Seg weights: /Users/krishdave/Documents/Krish Stuff/8th Semester/Spatial Computing/Project/SpatComp_Project/EarthVQA_SpatComp/pretrained_weights/sfpnr50.pth
+  VQA weights: /Users/krishdave/Documents/Krish Stuff/8th Semester/Spatial Computing/Project/SpatComp_Project/EarthVQA_SpatComp/pretrained_weights/soba.pth
+  Upload dir: /Users/krishdave/Documents/Krish Stuff/8th Semester/Spatial Computing/Project/SpatComp_Project/EarthVQA_SpatComp/backend/uploads
+============================================================
+[SmartCityPipeline] Initialized on device: cpu
+[SmartCityPipeline] Config dir: /Users/krishdave/Documents/Krish Stuff/8th Semester/Spatial Computing/Project/SpatComp_Project/EarthVQA_SpatComp/smart_city/config
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://172.16.141.106:5001
+[33mPress CTRL+C to quit[0m
+2026-04-06 19:57:30, INFO:EVER:<SemanticFPN> registered (source unknown)
+/Users/krishdave/Documents/Krish Stuff/8th Semester/Spatial Computing/Project/SpatComp_Project/EarthVQA_SpatComp/smart_city/spatial_engine.py:311: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  clean_road = remove_small_objects(road_mask, min_size=50)
+127.0.0.1 - - [06/Apr/2026 19:57:33] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 19:57:33] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:00:31] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:00:31] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:01:49] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:01:49] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:07:17] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:07:17] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:09:32] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:09:32] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:09:54] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:09:54] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:11:49] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:11:49] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:12:13] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:12:13] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:12:34] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:12:34] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:13:25] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:13:25] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:13:54] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:13:54] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:14:02] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:14:02] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:35:50] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:35:50] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:37:43] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:37:43] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:38:10] "POST /api/ask HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:38:10] "POST /api/ask HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:38:34] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:38:34] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:39:40] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:39:40] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:39:47] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:39:47] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:40:05] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:40:05] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:40:16] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:40:16] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:40:26] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:40:26] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:44:16] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:44:16] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:46:08] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:46:08] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:48:26] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:48:26] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:48:39] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:48:39] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:48:42] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:48:42] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:49:44] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:49:44] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 20:51:38] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 20:51:38] "POST /api/analyze HTTP/1.1" 200 -
+127.0.0.1 - - [06/Apr/2026 22:03:54] "POST /api/analyze HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [06/Apr/2026 22:03:54] "POST /api/analyze HTTP/1.1" 200 -

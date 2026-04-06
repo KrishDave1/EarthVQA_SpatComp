@@ -1,0 +1,50 @@
+# Semantic Segmentation Class Configuration
+# Maps class IDs to names and RGB colors
+# Based on EarthVQA dataset: data/earthvqa.py COLOR_MAP
+# Note: In the mask files, labels are 1-indexed (1-8), and 0 = no-data / ignore
+
+classes:
+  0:
+    name: "background"
+    color: [255, 255, 255]
+    planning_category: "neutral"
+  1:
+    name: "building"
+    color: [255, 0, 0]
+    planning_category: "built_area"
+  2:
+    name: "road"
+    color: [255, 255, 0]
+    planning_category: "infrastructure"
+  3:
+    name: "water"
+    color: [0, 0, 255]
+    planning_category: "natural_hazard"
+  4:
+    name: "barren"
+    color: [159, 129, 183]
+    planning_category: "developable"
+  5:
+    name: "forest"
+    color: [0, 255, 0]
+    planning_category: "green_space"
+  6:
+    name: "agriculture"
+    color: [255, 195, 128]
+    planning_category: "green_space"
+  7:
+    name: "playground"
+    color: [165, 0, 165]
+    planning_category: "green_space"
+
+# Number of segmentation classes (excluding ignore/no-data)
+num_classes: 8
+
+# Class IDs grouped by planning category
+planning_groups:
+  built_area: [1]           # building
+  infrastructure: [2]       # road
+  green_space: [5, 6, 7]    # forest, agriculture, playground
+  water_bodies: [3]         # water
+  developable: [4]          # barren
+  neutral: [0]              # background

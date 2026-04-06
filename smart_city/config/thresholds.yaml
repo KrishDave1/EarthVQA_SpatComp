@@ -1,0 +1,96 @@
+# Decision Engine Thresholds & Weights
+# ═══════════════════════════════════════════════════════════
+# CALIBRATED from EarthVQA training set (2522 images)
+# Values derived from dataset statistics (p25, p50, p75, p90 percentiles)
+# ═══════════════════════════════════════════════════════════
+
+# ── Urban Density Score ──
+density:
+  weights:
+    building_count: 0.4          # w1: weight for normalized building count
+    built_area_pct: 0.6          # w2: weight for built area percentage
+  thresholds:
+    # Calibrated: p25=0.0%, p50=3.5%, p75=17%, p90=27% building area
+    low: 0.07                    # below this → low density (was 0.25)
+    moderate: 0.34               # between low and high → moderate (was 0.50)
+    high: 0.70                   # above this → overcrowded
+  recommendations:
+    high: "Area is densely populated. Consider limiting further construction and introducing open spaces."
+    moderate: "Moderate building density. Area is suitable for controlled expansion."
+    low: "Low building density. Area has potential for residential or commercial development."
+
+# ── Green Coverage Score ──
+green_coverage:
+  weights:
+    vegetation_pct: 1.0          # forest + agriculture area %
+    playground_pct: 0.5          # playground area % (weighted less)
+  thresholds:
+    # Calibrated: p25=8%, p50=36%, p75=66% vegetation
+    insufficient: 0.10           # below 10% → critically low
+    low: 0.15                    # below 15% → needs improvement
+    adequate: 0.36               # 15-36% → acceptable (calibrated from p50)
+    good: 0.66                   # above 66% → good (calibrated from p75)
+  target_pct: 0.36               # calibrated from p50 of training set
+  recommendations:
+    insufficient: "Critical shortage of green spaces. Urgently recommend parks and tree planting programs."
+    low: "Below recommended green coverage. Suggest introducing parks or community gardens."
+    adequate: "Green coverage meets minimum urban planning standards."
+    good: "Excellent green coverage. Area has strong environmental quality."
+
+# ── Flood Risk Score ──
+flood_risk:
+  weights:
+    water_proximity: 0.5         # inverse of distance(building, water)
+    water_area_pct: 0.3          # water body area percentage
+    building_water_ratio: 0.2    # buildings near water / total buildings
+  thresholds:
+    low: 0.25
+    moderate: 0.50
+    high: 0.70
+  min_safe_distance_px: 50       # minimum safe distance in pixels (~50m at 1m/px)
+  recommendations:
+    high: "High flood risk detected. Buildings are dangerously close to water bodies. Recommend buffer zones and flood barriers."
+    moderate: "Moderate flood risk. Some structures are near water. Consider drainage improvements."
+    low: "Low flood risk. Adequate distance between buildings and water bodies."
+
+# ── Infrastructure Score ──
+infrastructure:
+  weights:
+    road_coverage_pct: 0.5       # road area percentage
+    intersection_count: 0.3      # normalized intersection count
+    road_connectivity: 0.2       # road network connectivity metric
+  thresholds:
+    # Calibrated: p25=0.8%, p50=2.8%, p75=8% road coverage
+    poor: 0.11                   # poor infrastructure (calibrated from p25*4)
+    moderate: 0.32               # basic infrastructure (calibrated from p50*4)
+    good: 0.70                   # good infrastructure
+  recommendations:
+    poor: "Poor road connectivity. Recommend expanding road network and adding intersections for better access."
+    moderate: "Basic road infrastructure present. Consider adding secondary roads for improved connectivity."
+    good: "Good road connectivity and infrastructure coverage."
+
+# ── Overall Planning Assessment ──
+planning:
+  suitability_weights:
+    density: 0.25
+    green_coverage: 0.25
+    flood_risk: 0.25
+    infrastructure: 0.25
+  suitability_labels:
+    - label: "Not Suitable"
+      range: [0.0, 0.3]
+    - label: "Needs Improvement"
+      range: [0.3, 0.5]
+    - label: "Moderately Suitable"
+      range: [0.5, 0.7]
+    - label: "Suitable"
+      range: [0.7, 0.85]
+    - label: "Highly Suitable"
+      range: [0.85, 1.0]
+
+# ── Normalization Parameters ──
+# Calibrated from training set statistics
+normalization:
+  building_count_max: 122        # max building count in training set (was 200)
+  intersection_count_max: 10
+  image_area_px: 262144          # 512*512

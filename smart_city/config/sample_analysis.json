@@ -1,0 +1,82 @@
+{
+  "4191.png": {
+    "building_count": 2,
+    "building_area_pct": 0.0011501312255859375,
+    "road_area_pct": 0.0059795379638671875,
+    "water_area_pct": 0.26851654052734375,
+    "vegetation_pct": 0.3601264953613281,
+    "building_water_dist": 31.016124838541646
+  },
+  "4192.png": {
+    "building_count": 9,
+    "building_area_pct": 0.23149585723876953,
+    "road_area_pct": 0.15824317932128906,
+    "water_area_pct": 0.036396026611328125,
+    "vegetation_pct": 0.1720561981201172,
+    "building_water_dist": 1.0
+  },
+  "4193.png": {
+    "building_count": 6,
+    "building_area_pct": 0.017892837524414062,
+    "road_area_pct": 0.022255897521972656,
+    "water_area_pct": 0.2610187530517578,
+    "vegetation_pct": 0.4119682312011719,
+    "building_water_dist": 8.94427190999916
+  },
+  "4194.png": {
+    "building_count": 7,
+    "building_area_pct": 0.025588035583496094,
+    "road_area_pct": 0.017314910888671875,
+    "water_area_pct": 0.16955184936523438,
+    "vegetation_pct": 0.4863014221191406,
+    "building_water_dist": 15.132745950421556
+  },
+  "4195.png": {
+    "building_count": 23,
+    "building_area_pct": 0.18221282958984375,
+    "road_area_pct": 0.19751548767089844,
+    "water_area_pct": 0.0,
+    "vegetation_pct": 0.14900588989257812,
+    "building_water_dist": Infinity
+  },
+  "4196.png": {
+    "building_count": 16,
+    "building_area_pct": 0.04218101501464844,
+    "road_area_pct": 0.1252279281616211,
+    "water_area_pct": 0.08481884002685547,
+    "vegetation_pct": 0.5030145645141602,
+    "building_water_dist": 9.219544457292887
+  },
+  "4197.png": {
+    "building_count": 0,
+    "building_area_pct": 0.0,
+    "road_area_pct": 0.04831695556640625,
+    "water_area_pct": 0.0430145263671875,
+    "vegetation_pct": 0.8770303726196289,
+    "building_water_dist": Infinity
+  },
+  "4198.png": {
+    "building_count": 0,
+    "building_area_pct": 0.0,
+    "road_area_pct": 0.00405120849609375,
+    "water_area_pct": 0.10083961486816406,
+    "vegetation_pct": 0.4789009094238281,
+    "building_water_dist": Infinity
+  },
+  "4199.png": {
+    "building_count": 2,
+    "building_area_pct": 0.0007314682006835938,
+    "road_area_pct": 0.0028276443481445312,
+    "water_area_pct": 0.5699596405029297,
+    "vegetation_pct": 0.13672733306884766,
+    "building_water_dist": 15.132745950421556
+  },
+  "4200.png": {
+    "building_count": 16,
+    "building_area_pct": 0.06638717651367188,
+    "road_area_pct": 0.018667221069335938,
+    "water_area_pct": 0.047512054443359375,
+    "vegetation_pct": 0.5598859786987305,
+    "building_water_dist": 17.46424919657298
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "spatial_features": {
+    "area_coverage": {
+      "building": 0.0082,
+      "road": 0.0053,
+      "water": 0.031,
+      "vegetation": 0.9555,
+      "barren": 0.0,
+      "forest": 0.2585,
+      "agriculture": 0.697,
+      "playground": 0.0
+    },
+    "object_counts": {
+      "buildings": 3,
+      "water_bodies": 2,
+      "road_segments": 1
+    },
+    "distances": {
+      "building_to_water_min_px": 23.0,
+      "building_to_road_min_px": 1.0
+    },
+    "density": {
+      "building_density": 0.0246,
+      "intersection_count": 1,
+      "road_connectivity": 0.0611
+    },
+    "image_info": {
+      "width": 512,
+      "height": 512,
+      "total_pixels": 262144
+    },
+    "distance_details": [
+      {
+        "class_a": "building",
+        "class_b": "water",
+        "min_distance_px": 23.0,
+        "mean_centroid_distance_px": 165.09,
+        "proximity_score": 0.7945
+      },
+      {
+        "class_a": "building",
+        "class_b": "road",
+        "min_distance_px": 1.0,
+        "mean_centroid_distance_px": 39.27,
+        "proximity_score": 0.99
+      },
+      {
+        "class_a": "building",
+        "class_b": "forest",
+        "min_distance_px": 46.07,
+        "mean_centroid_distance_px": 227.47,
+        "proximity_score": 0.6309
+      },
+      {
+        "class_a": "water",
+        "class_b": "agriculture",
+        "min_distance_px": 1.0,
+        "mean_centroid_distance_px": 185.64,
+        "proximity_score": 0.99
+      },
+      {
+        "class_a": "road",
+        "class_b": "water",
+        "min_distance_px": 1.0,
+        "mean_centroid_distance_px": 188.59,
+        "proximity_score": 0.99
+      }
+    ]
+  },
+  "planning_report": {
+    "overall_suitability": "Needs Improvement",
+    "overall_score": 0.4034,
+    "summary": "This appears to be a rural area. The scene contains 3 buildings covering 0.8% of the area. Green spaces (vegetation, agriculture, playgrounds) cover 95.5% of the area. There are 2 water bodies present. \nKey concerns: • Poor Infrastructure: Poor road connectivity. Recommend expanding road network and adding intersections for better access. \nPositive aspects: • Good Green Coverage",
+    "scene_type": "rural",
+    "decisions": [
+      {
+        "category": "density",
+        "severity": "low",
+        "score": 0.0197,
+        "title": "Low Urban Density",
+        "description": "Urban density score: 0.02/1.00. The area contains 3 buildings covering 0.8% of the scene.",
+        "recommendation": "Low building density. Area has potential for residential or commercial development.",
+        "contributing_factors": [
+          "3 buildings detected",
+          "Built area covers 0.8% of the scene",
+          "Building density: 0.02"
+        ]
+      },
+      {
+        "category": "green_coverage",
+        "severity": "low",
+        "score": 1.0,
+        "title": "Good Green Coverage",
+        "description": "Green coverage score: 1.00/1.00. Vegetation covers 95.5% of the scene (target: 36%).",
+        "recommendation": "Excellent green coverage. Area has strong environmental quality.",
+        "contributing_factors": [
+          "Total vegetation: 95.5%",
+          "Forest: 25.8%",
+          "Agriculture: 69.7%",
+          "Recommended green coverage: 15-25%"
+        ]
+      },
+      {
+        "category": "flood_risk",
+        "severity": "low",
+        "score": 0.4859,
+        "title": "Low Flood Risk",
+        "description": "Flood risk score: 0.49/1.00. Buildings are 23px from nearest water body.",
+        "recommendation": "Low flood risk. Adequate distance between buildings and water bodies.",
+        "contributing_factors": [
+          "Nearest building-water distance: 23 pixels",
+          "⚠ Below safe distance threshold (50 px)",
+          "Water coverage: 3.1%",
+          "2 water bodies detected"
+        ]
+      },
+      {
+        "category": "infrastructure",
+        "severity": "high",
+        "score": 0.0598,
+        "title": "Poor Infrastructure",
+        "description": "Infrastructure score: 0.06/1.00. Road network covers 0.5% with 1 intersections.",
+        "recommendation": "Poor road connectivity. Recommend expanding road network and adding intersections for better access.",
+        "contributing_factors": [
+          "Road coverage: 0.5%",
+          "Intersections detected: 1",
+          "Road connectivity score: 0.06",
+          "Road segments: 1"
+        ]
+      }
+    ]
+  }
+}
