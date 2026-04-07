@@ -1,1 +1,0 @@
-# EarthVQA_SpatComp
