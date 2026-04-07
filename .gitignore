@@ -1,1 +1,4 @@
 __pycache__
+frontend.log
+backend.log
+*.DS_Store 
