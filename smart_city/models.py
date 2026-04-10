@@ -105,8 +105,8 @@ class SpatialFeatures:
             {
                 'class_a': d.class_a,
                 'class_b': d.class_b,
-                'min_distance_px': round(d.min_distance_px, 2),
-                'mean_centroid_distance_px': round(d.mean_centroid_distance_px, 2),
+                'min_distance_px': round(d.min_distance_px, 2) if d.min_distance_px != float('inf') else None,
+                'mean_centroid_distance_px': round(d.mean_centroid_distance_px, 2) if d.mean_centroid_distance_px != float('inf') else None,
                 'proximity_score': round(d.proximity_score, 4),
             }
             for d in self.distances

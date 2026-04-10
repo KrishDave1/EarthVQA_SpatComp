@@ -58,11 +58,15 @@ export default function VQA() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
+      const responseData = typeof res.data === 'string' 
+        ? JSON.parse(res.data) 
+        : res.data;
+        
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: res.data.answer,
-        intent: res.data.intent?.type,
-        confidence: res.data.confidence
+        content: responseData.answer,
+        intent: responseData.intent?.type,
+        confidence: responseData.confidence
       }]);
     } catch (err: any) {
       console.error(err);
