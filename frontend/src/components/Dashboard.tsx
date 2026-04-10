@@ -71,12 +71,16 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      console.log("Analysis Success:", analyzeRes.data);
-      if (analyzeRes.data.planning_report) {
-         setReport(analyzeRes.data.planning_report);
+      const responseData = typeof analyzeRes.data === 'string' 
+        ? JSON.parse(analyzeRes.data) 
+        : analyzeRes.data;
+        
+      console.log("Analysis Success:", responseData);
+      if (responseData.planning_report) {
+         setReport(responseData.planning_report);
       }
-      if (analyzeRes.data.colorized_mask_base64) {
-        setMaskUrl(`data:image/png;base64,${analyzeRes.data.colorized_mask_base64}`);
+      if (responseData.colorized_mask_base64) {
+        setMaskUrl(`data:image/png;base64,${responseData.colorized_mask_base64}`);
       }
     } catch (err: any) {
       console.error(err);
