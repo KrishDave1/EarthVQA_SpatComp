@@ -2,7 +2,11 @@
   "Urban Dense": [
     {
       "question": "Is this area overcrowded?",
+<<<<<<< HEAD
       "answer": "Urban density score: 0.80/1.00. The area contains 129 buildings covering 33.3% of the scene. Area is densely populated. Consider limiting further construction and introducing open spaces.",
+=======
+      "answer": "Urban density score: 0.83/1.00. The area contains 129 buildings covering 35.6% of the scene. Area is densely populated. Consider limiting further construction and introducing open spaces.",
+>>>>>>> be3b629f29cb9a60cc29d883e3a790cf03dde3e2
       "intent": "density",
       "confidence": 0.7
     },
@@ -14,7 +18,11 @@
     },
     {
       "question": "How many buildings are in this scene?",
+<<<<<<< HEAD
       "answer": "Overall assessment: Moderately Suitable (score: 0.61). This appears to be a urban area. The scene contains 129 buildings covering 33.3% of the area. Green spaces (vegetation, agriculture, playgrounds) cover 1.4% of the area. \nKey concerns: • High Urban Density: Area is densely populated. Consider limiting further construction and introducing open spaces. • Insufficient Green Coverage: Critical shortage of green spaces. Urgently recommend parks and tree planting programs. \nPositive aspects: • Good Infrastructure",
+=======
+      "answer": "Overall assessment: Moderately Suitable (score: 0.60). This appears to be a urban area. The scene contains 129 buildings covering 35.6% of the area. Green spaces (vegetation, agriculture, playgrounds) cover 1.4% of the area. \nKey concerns: • High Urban Density: Area is densely populated. Consider limiting further construction and introducing open spaces. • Insufficient Green Coverage: Critical shortage of green spaces. Urgently recommend parks and tree planting programs. \nPositive aspects: • Good Infrastructure",
+>>>>>>> be3b629f29cb9a60cc29d883e3a790cf03dde3e2
       "intent": "planning",
       "confidence": 0.7
     },
@@ -26,7 +34,11 @@
     },
     {
       "question": "Is this area suitable for residential expansion?",
+<<<<<<< HEAD
       "answer": "Overall assessment: Moderately Suitable (score: 0.61). This appears to be a urban area. The scene contains 129 buildings covering 33.3% of the area. Green spaces (vegetation, agriculture, playgrounds) cover 1.4% of the area. \nKey concerns: • High Urban Density: Area is densely populated. Consider limiting further construction and introducing open spaces. • Insufficient Green Coverage: Critical shortage of green spaces. Urgently recommend parks and tree planting programs. \nPositive aspects: • Good Infrastructure",
+=======
+      "answer": "Overall assessment: Moderately Suitable (score: 0.60). This appears to be a urban area. The scene contains 129 buildings covering 35.6% of the area. Green spaces (vegetation, agriculture, playgrounds) cover 1.4% of the area. \nKey concerns: • High Urban Density: Area is densely populated. Consider limiting further construction and introducing open spaces. • Insufficient Green Coverage: Critical shortage of green spaces. Urgently recommend parks and tree planting programs. \nPositive aspects: • Good Infrastructure",
+>>>>>>> be3b629f29cb9a60cc29d883e3a790cf03dde3e2
       "intent": "planning",
       "confidence": 0.7
     }
