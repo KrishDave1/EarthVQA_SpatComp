@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { LayoutDashboard, MessageSquare, Image as ImageIcon, Menu, X, Satellite } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Image as ImageIcon, Menu, X, Satellite, GitCompareArrows } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import VQA from './components/VQA';
 import Gallery from './components/Gallery';
+import ChangeDetection from './components/ChangeDetection';
 
-export type TView = 'dashboard' | 'vqa' | 'gallery';
+export type TView = 'dashboard' | 'vqa' | 'gallery' | 'change-detection';
 
 function App() {
   const [activeView, setActiveView] = useState<TView>('dashboard');
@@ -59,6 +60,7 @@ function App() {
 
           <nav className="flex-1 space-y-2 mt-16 md:mt-0">
             <NavItem view="dashboard" icon={LayoutDashboard} label="Planning Dashboard" />
+            <NavItem view="change-detection" icon={GitCompareArrows} label="Change Detection" />
             <NavItem view="vqa" icon={MessageSquare} label="VQA Assistant" />
             <NavItem view="gallery" icon={ImageIcon} label="Sample Gallery" />
           </nav>
@@ -82,6 +84,7 @@ function App() {
         
         <div className="max-w-7xl mx-auto relative z-10">
           {activeView === 'dashboard' && <Dashboard />}
+          {activeView === 'change-detection' && <ChangeDetection />}
           {activeView === 'vqa' && <VQA />}
           {activeView === 'gallery' && <Gallery />}
         </div>

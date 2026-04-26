@@ -207,6 +207,7 @@ All decision thresholds are externalized here. **Calibrated from 2,522 real Eart
 | `/api/analyze` | POST | mask image (PNG) | Full planning report JSON |
 | `/api/ask` | POST | mask image + question string | Answer + intent + confidence |
 | `/api/visualize` | POST | mask image | Colorized mask (PNG) |
+| `/api/change-detect` | POST | `image_before` & `image_after` | Sprawl classification & Δ features |
 
 ---
 
@@ -393,6 +394,26 @@ The engine uses Intent Parsing to route your question. Try testing it with these
 
 > **Tip:** You'll notice the assistant's replies include technical tags like `intent: risk` or `conf: 0.95`. This indicates whether the system intercepted your question with deterministic spatial reasoning or passed it to the neural network!
 
-### 3. Start/Stop Workflows
+### 3. Time-Series Change Detection (Urban Sprawl)
+This new 4D temporal tracking engine allows you to compare two satellite images of the same area to track urban sprawl over time.
+
+**How to Use:**
+1. Navigate to the **Change Detection** tab in the sidebar.
+2. Upload a "Before (T₁)" image and an "After (T₂)" image. (You can use images from `Test_Images/` or any 512x512 satellite photos).
+3. Click **Detect Changes**.
+4. The system will extract spatial feature deltas (Δ) and run them through a pretrained Random Forest classifier to categorize the type of urban sprawl (e.g., *Aggressive Urbanization*, *Deforestation*, *Water Encroachment*).
+
+**How to Train the Classifier (Optional):**
+A trained model is already provided (`change_classifier.joblib`), but you can retrain the Random Forest classifier using synthetic data or the real Kaggle LEVIR-CD dataset:
+```bash
+# Train using fast synthetic data generation (Generates 3000 samples based on statistical distributions)
+source .venv/bin/activate
+python -m smart_city.train_change_classifier --synthetic --num_samples 3000
+
+# Or train locally pointing to an extracted LEVIR-CD dataset
+python -m smart_city.train_change_classifier --dataset_dir /path/to/LEVIR-CD/train
+```
+
+### 4. Start/Stop Workflows
 - **Start**: Always run `./start.sh` from the root directory. This coordinates the Python backend and Vite frontend to start simultaneously on ports 5000 and 5173.
 - **Stop**: The start script will print out the precise process IDs. To shut them down, copy the kill command outputted (e.g., `kill 1234 5678`).
