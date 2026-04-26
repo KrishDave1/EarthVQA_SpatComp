@@ -258,6 +258,88 @@ def visualize_mask():
         return jsonify({'error': f'Visualization failed: {str(e)}'}), 500
 
 
+@app.route('/api/change-detect', methods=['POST'])
+def change_detect():
+    """
+    Detect temporal changes between two satellite images of the same region.
+    
+    Accepts multipart/form-data with:
+        - 'image_before' + 'image_after': satellite image files (PNG/JPG)
+        - OR 'mask_before' + 'mask_after': pre-computed segmentation masks
+    
+    Returns JSON with:
+        - sprawl classification, confidence, and description
+        - delta features (Δ between time periods)
+        - spatial features for both time periods
+        - recommendations
+        - colorized masks for both time periods
+    """
+    pipeline = get_pipeline()
+    
+    try:
+        result_before = None
+        result_after = None
+        
+        # Handle mask-based input
+        if 'mask_before' in request.files and 'mask_after' in request.files:
+            mask_before = load_mask_from_file(request.files['mask_before'])
+            mask_after = load_mask_from_file(request.files['mask_after'])
+            
+            result_before = pipeline.analyze_mask(mask_before)
+            result_after = pipeline.analyze_mask(mask_after)
+        
+        # Handle image-based input
+        elif 'image_before' in request.files and 'image_after' in request.files:
+            temp_before = os.path.join(UPLOAD_DIR, 'temp_before.png')
+            temp_after = os.path.join(UPLOAD_DIR, 'temp_after.png')
+            
+            request.files['image_before'].save(temp_before)
+            request.files['image_after'].save(temp_after)
+            
+            try:
+                # Apply 1.66x upcale factor strictly for Time Change Detection
+                # to correct the resolution mismatch (LEVIR-CD 0.5m/px vs LoveDA 0.3m/px)
+                result_before = pipeline.analyze_image(temp_before, scale_factor=1.66)
+                result_after = pipeline.analyze_image(temp_after, scale_factor=1.66)
+            finally:
+                for p in [temp_before, temp_after]:
+                    if os.path.exists(p):
+                        os.remove(p)
+        else:
+            return jsonify({
+                'error': 'Provide either (image_before + image_after) or '
+                         '(mask_before + mask_after) as multipart files.'
+            }), 400
+        
+        # Run change detection
+        pipeline._ensure_change_detector()
+        change_result = pipeline.change_detector.analyze(
+            result_before.spatial_features,
+            result_after.spatial_features,
+        )
+        
+        # Build response
+        response = change_result.to_dict()
+        
+        # Add colorized masks
+        if result_before.colorized_mask is not None:
+            response['colorized_mask_before_base64'] = numpy_to_base64_png(
+                result_before.colorized_mask
+            )
+        if result_after.colorized_mask is not None:
+            response['colorized_mask_after_base64'] = numpy_to_base64_png(
+                result_after.colorized_mask
+            )
+        
+        return jsonify(response)
+    
+    except RuntimeError as e:
+        return jsonify({'error': str(e)}), 500
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': f'Change detection failed: {str(e)}'}), 500
+
+
 # ─── Main ─────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':

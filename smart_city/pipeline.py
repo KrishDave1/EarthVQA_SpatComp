@@ -24,6 +24,7 @@ from smart_city.models import (
 from smart_city.spatial_engine import SpatialFeatureEngine
 from smart_city.decision_engine import DecisionEngine
 from smart_city.intent_parser import IntentParser
+from smart_city.change_detector import ChangeDetector, ChangeDetectionResult
 
 # Conditional torch import (may not be needed for mask-only analysis)
 try:
@@ -91,6 +92,9 @@ class SmartCityPipeline:
         self.vqa_model = None
         self.seg_weights_path = seg_weights_path
         self.vqa_weights_path = vqa_weights_path
+        
+        # Change detector (lazy-loaded)
+        self.change_detector = None
         
         # Model loading status
         self._seg_loaded = False
@@ -226,7 +230,7 @@ class SmartCityPipeline:
             colorized_mask=colorized,
         )
 
-    def analyze_image(self, image_path: str) -> AnalysisResult:
+    def analyze_image(self, image_path: str, scale_factor: float = 1.0) -> AnalysisResult:
         """
         Full pipeline: Image → Segmentation → Spatial Analysis → Decisions.
         
@@ -234,6 +238,7 @@ class SmartCityPipeline:
         
         Args:
             image_path: Path to satellite image file.
+            scale_factor: Artificial upscaling factor before inference to fix domain scale mismatches.
         
         Returns:
             AnalysisResult with spatial features and planning report.
@@ -248,15 +253,36 @@ class SmartCityPipeline:
             raise RuntimeError("Segmentation model not loaded. "
                              "Provide seg_weights_path or use analyze_mask().")
         
-        # Preprocess image
+        # Preprocess image (gets tensor of shape [1, 3, H, W])
         image_tensor = self._preprocess_image(image_path)
         
+        # Handle Scaling for domain shift correction (e.g. LEVIR-CD to LoveDA sizes)
+        orig_h, orig_w = image_tensor.shape[2], image_tensor.shape[3]
+        if scale_factor != 1.0:
+            import torch.nn.functional as F
+            new_h = int(orig_h * scale_factor)
+            new_w = int(orig_w * scale_factor)
+            
+            # SemanticFPN uses ResNet50, which has a 32x downsampling backbone.
+            # Input sizes MUST be exactly divisible by 32 to avoid tensor dimension mismatches during FPN upsampling
+            new_h = int(np.ceil(new_h / 32.0)) * 32
+            new_w = int(np.ceil(new_w / 32.0)) * 32
+            
+            image_tensor = F.interpolate(image_tensor, size=(new_h, new_w), mode='bilinear', align_corners=False)
+            
         # Run segmentation
         with torch.no_grad():
             pred, features = self.seg_model(image_tensor.to(self.device))
-            seg_mask = pred.argmax(dim=1).cpu().numpy()[0]  # H x W
+            seg_mask_tensor = pred.argmax(dim=1).cpu().float().unsqueeze(0)  # [1, 1, H_scaled, W_scaled]
+            
+            # Revert scale mathematically for perfectly aligned UI
+            if scale_factor != 1.0:
+                import torch.nn.functional as F
+                seg_mask_tensor = F.interpolate(seg_mask_tensor, size=(orig_h, orig_w), mode='nearest')
+                
+            seg_mask = seg_mask_tensor.squeeze().numpy().astype(np.int32)  # H x W
         
-        # Run spatial analysis on the mask
+        # Run spatial analysis on the mathematically true mask
         return self.analyze_mask(seg_mask)
 
     def answer_question(self, image_path_or_mask, question: str) -> VQAResult:
@@ -308,6 +334,61 @@ class SmartCityPipeline:
             explanation=explanation,
             intent=intent,
             analysis=analysis,
+        )
+
+    # ─── Change Detection Methods ─────────────────────────────────────
+
+    def _ensure_change_detector(self):
+        """Lazy-initialize the ChangeDetector."""
+        if self.change_detector is None:
+            self.change_detector = ChangeDetector()
+
+    def analyze_change(
+        self,
+        image_path_before: str,
+        image_path_after: str,
+    ) -> ChangeDetectionResult:
+        """
+        Compare two temporal satellite images and classify urban sprawl.
+        
+        Requires segmentation model weights.
+        
+        Args:
+            image_path_before: Path to the earlier satellite image (T₁).
+            image_path_after: Path to the later satellite image (T₂).
+        
+        Returns:
+            ChangeDetectionResult with sprawl classification and deltas.
+        """
+        self._ensure_change_detector()
+        result_before = self.analyze_image(image_path_before)
+        result_after = self.analyze_image(image_path_after)
+        return self.change_detector.analyze(
+            result_before.spatial_features,
+            result_after.spatial_features,
+        )
+
+    def analyze_change_masks(
+        self,
+        mask_before: np.ndarray,
+        mask_after: np.ndarray,
+    ) -> ChangeDetectionResult:
+        """
+        Compare two pre-computed segmentation masks and classify urban sprawl.
+        
+        Args:
+            mask_before: H x W segmentation mask from time T₁.
+            mask_after: H x W segmentation mask from time T₂.
+        
+        Returns:
+            ChangeDetectionResult with sprawl classification and deltas.
+        """
+        self._ensure_change_detector()
+        result_before = self.analyze_mask(mask_before)
+        result_after = self.analyze_mask(mask_after)
+        return self.change_detector.analyze(
+            result_before.spatial_features,
+            result_after.spatial_features,
         )
 
     # ─── Rule-Based Answer Generation ─────────────────────────────────
