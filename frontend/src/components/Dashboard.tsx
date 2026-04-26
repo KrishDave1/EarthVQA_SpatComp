@@ -263,7 +263,7 @@ export default function Dashboard() {
                     key={i}
                     title={d.category}
                     score={d.score}
-                    label={d.severity}
+                    label={d.title}
                     severity={d.severity as any}
                     recommendation={d.recommendation}
                     icon={getIcon(d.category)}

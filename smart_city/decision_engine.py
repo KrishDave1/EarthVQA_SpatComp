@@ -219,11 +219,11 @@ class DecisionEngine:
 
         # Classify
         if raw_green >= thresholds['good']:
-            severity = 'low'  # low concern = good
+            severity = 'good'
             title = 'Good Green Coverage'
             rec_key = 'good'
         elif raw_green >= thresholds['adequate']:
-            severity = 'low'
+            severity = 'adequate'
             title = 'Adequate Green Coverage'
             rec_key = 'adequate'
         elif raw_green >= thresholds['low']:
@@ -231,7 +231,7 @@ class DecisionEngine:
             title = 'Low Green Coverage'
             rec_key = 'low'
         else:
-            severity = 'high'
+            severity = 'critical'
             title = 'Insufficient Green Coverage'
             rec_key = 'insufficient'
 
@@ -363,7 +363,7 @@ class DecisionEngine:
 
         # Classify
         if score >= thresholds['good']:
-            severity = 'low'  # low concern = good infra
+            severity = 'good'
             title = 'Good Infrastructure'
             rec_key = 'good'
         elif score >= thresholds['moderate']:
@@ -371,7 +371,7 @@ class DecisionEngine:
             title = 'Moderate Infrastructure'
             rec_key = 'moderate'
         else:
-            severity = 'high'
+            severity = 'critical'
             title = 'Poor Infrastructure'
             rec_key = 'poor'
 
@@ -487,20 +487,18 @@ class DecisionEngine:
             )
         
         # Highlight high-severity decisions
-        high_severity = [d for d in decisions if d.severity == 'high']
+        high_severity = [d for d in decisions if d.severity in ('high', 'critical')]
         if high_severity:
             parts.append("\nKey concerns:")
             for d in high_severity:
                 parts.append(f"• {d.title}: {d.recommendation}")
         
         # Positive aspects
-        low_severity = [d for d in decisions if d.severity == 'low']
-        if low_severity:
-            positive = [d for d in low_severity if d.category in ('green_coverage', 'infrastructure')]
-            if positive:
-                parts.append("\nPositive aspects:")
-                for d in positive:
-                    parts.append(f"• {d.title}")
+        positive = [d for d in decisions if d.severity in ('low', 'good')]
+        if positive:
+            parts.append("\nPositive aspects:")
+            for d in positive:
+                parts.append(f"• {d.title}")
         
         return ' '.join(parts)
 

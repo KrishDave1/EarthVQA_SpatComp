@@ -4,37 +4,36 @@ interface ScoreCardProps {
   title: string;
   score: number; // 0 to 1
   label: string; // e.g. "Needs Improvement"
-  severity: "low" | "moderate" | "high" | "insufficient" | "adequate" | "good" | "poor";
+  severity: string;
   icon: LucideIcon;
   recommendation: string;
 }
 
 export default function ScoreCard({ title, score, label, severity, icon: Icon, recommendation }: ScoreCardProps) {
-  // Determine color based on severity loosely
+  // Determine color based on severity
   let color = 'text-green-400';
   let bg = 'bg-green-400/10';
   let border = 'border-green-400/20';
   let dot = 'bg-green-400';
 
-  if (severity === 'high' || severity === 'insufficient' || severity === 'poor') {
+  // Red: bad states
+  if (['high', 'critical', 'insufficient', 'poor'].includes(severity)) {
     color = 'text-red-400';
     bg = 'bg-red-400/10';
     border = 'border-red-400/20';
     dot = 'bg-red-400';
-  } else if (severity === 'moderate' || severity === 'low') {
+  // Yellow: moderate / in-between states
+  } else if (['moderate', 'adequate'].includes(severity)) {
     color = 'text-yellow-400';
     bg = 'bg-yellow-400/10';
     border = 'border-yellow-400/20';
     dot = 'bg-yellow-400';
-  }
-
-  // Ensure score logic allows "low density" to be green (so we shouldn't strictly map severity to bad)
-  // Let's refine based on the score value itself or severity name specifically
-  if (['low', 'adequate', 'good'].includes(severity) && title !== 'Green Coverage') {
-     // If it's density/flood/infra, 'low' risk/density is GOOD.
-     if (title === 'Flood Risk' && severity === 'low') {
-       color = 'text-green-400'; bg = 'bg-green-400/10'; border = 'border-green-400/20'; dot = 'bg-green-400';
-     } 
+  // Green: good states (including 'low' for density/flood which means low concern)
+  } else if (['good', 'low'].includes(severity)) {
+    color = 'text-green-400';
+    bg = 'bg-green-400/10';
+    border = 'border-green-400/20';
+    dot = 'bg-green-400';
   }
 
   // Convert 0-1 score to percentage
