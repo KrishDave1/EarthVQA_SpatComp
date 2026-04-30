@@ -31,6 +31,7 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from smart_city.pipeline import SmartCityPipeline
 from smart_city.spatial_engine import SpatialFeatureEngine
+from smart_city.rgb_change_detector import RGBChangeDetector, colorize_rgb_mask
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
@@ -47,6 +48,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Global pipeline instance (lazy-initialized)
 _pipeline = None
+_rgb_change_detector = None
 
 
 def get_pipeline() -> SmartCityPipeline:
@@ -59,6 +61,14 @@ def get_pipeline() -> SmartCityPipeline:
             vqa_weights_path=VQA_WEIGHTS if os.path.exists(VQA_WEIGHTS) else None,
         )
     return _pipeline
+
+
+def get_rgb_change_detector() -> RGBChangeDetector:
+    """Lazy-initialize the RGB-based change detector."""
+    global _rgb_change_detector
+    if _rgb_change_detector is None:
+        _rgb_change_detector = RGBChangeDetector()
+    return _rgb_change_detector
 
 
 def numpy_to_base64_png(arr: np.ndarray) -> str:
@@ -261,34 +271,43 @@ def visualize_mask():
 @app.route('/api/change-detect', methods=['POST'])
 def change_detect():
     """
-    Detect temporal changes between two satellite images of the same region.
+    Detect temporal changes between two satellite images.
+    
+    Uses RGB-based direct pixel analysis instead of the SemanticFPN model
+    (which was trained on LoveDA and fails on LEVIR-CD domain images).
     
     Accepts multipart/form-data with:
         - 'image_before' + 'image_after': satellite image files (PNG/JPG)
         - OR 'mask_before' + 'mask_after': pre-computed segmentation masks
     
-    Returns JSON with:
-        - sprawl classification, confidence, and description
-        - delta features (Δ between time periods)
-        - spatial features for both time periods
-        - recommendations
-        - colorized masks for both time periods
+    Returns JSON with sprawl classification, delta features, and colorized masks.
     """
     pipeline = get_pipeline()
     
     try:
-        result_before = None
-        result_after = None
-        
-        # Handle mask-based input
+        # Handle mask-based input (use existing pipeline for pre-computed masks)
         if 'mask_before' in request.files and 'mask_after' in request.files:
             mask_before = load_mask_from_file(request.files['mask_before'])
             mask_after = load_mask_from_file(request.files['mask_after'])
             
             result_before = pipeline.analyze_mask(mask_before)
             result_after = pipeline.analyze_mask(mask_after)
+            
+            pipeline._ensure_change_detector()
+            change_result = pipeline.change_detector.analyze(
+                result_before.spatial_features,
+                result_after.spatial_features,
+            )
+            
+            response = change_result.to_dict()
+            if result_before.colorized_mask is not None:
+                response['colorized_mask_before_base64'] = numpy_to_base64_png(result_before.colorized_mask)
+            if result_after.colorized_mask is not None:
+                response['colorized_mask_after_base64'] = numpy_to_base64_png(result_after.colorized_mask)
+            
+            return jsonify(response)
         
-        # Handle image-based input
+        # Handle image-based input → use RGB-based direct analysis
         elif 'image_before' in request.files and 'image_after' in request.files:
             temp_before = os.path.join(UPLOAD_DIR, 'temp_before.png')
             temp_after = os.path.join(UPLOAD_DIR, 'temp_after.png')
@@ -297,10 +316,19 @@ def change_detect():
             request.files['image_after'].save(temp_after)
             
             try:
-                # Apply 1.66x upcale factor strictly for Time Change Detection
-                # to correct the resolution mismatch (LEVIR-CD 0.5m/px vs LoveDA 0.3m/px)
-                result_before = pipeline.analyze_image(temp_before, scale_factor=1.66)
-                result_after = pipeline.analyze_image(temp_after, scale_factor=1.66)
+                # Use the RGB-based change detector (NO segmentation model needed)
+                rgb_detector = get_rgb_change_detector()
+                change_result, color_before, color_after, feat_before, feat_after = \
+                    rgb_detector.analyze(temp_before, temp_after)
+                
+                # Build response
+                response = change_result.to_dict()
+                response['colorized_mask_before_base64'] = numpy_to_base64_png(color_before)
+                response['colorized_mask_after_base64'] = numpy_to_base64_png(color_after)
+                response['classifier_type'] = 'rgb-spectral'
+                
+                return jsonify(response)
+                
             finally:
                 for p in [temp_before, temp_after]:
                     if os.path.exists(p):
@@ -310,28 +338,6 @@ def change_detect():
                 'error': 'Provide either (image_before + image_after) or '
                          '(mask_before + mask_after) as multipart files.'
             }), 400
-        
-        # Run change detection
-        pipeline._ensure_change_detector()
-        change_result = pipeline.change_detector.analyze(
-            result_before.spatial_features,
-            result_after.spatial_features,
-        )
-        
-        # Build response
-        response = change_result.to_dict()
-        
-        # Add colorized masks
-        if result_before.colorized_mask is not None:
-            response['colorized_mask_before_base64'] = numpy_to_base64_png(
-                result_before.colorized_mask
-            )
-        if result_after.colorized_mask is not None:
-            response['colorized_mask_after_base64'] = numpy_to_base64_png(
-                result_after.colorized_mask
-            )
-        
-        return jsonify(response)
     
     except RuntimeError as e:
         return jsonify({'error': str(e)}), 500

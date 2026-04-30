@@ -256,7 +256,7 @@ class SmartCityPipeline:
         # Preprocess image (gets tensor of shape [1, 3, H, W])
         image_tensor = self._preprocess_image(image_path)
         
-        # Handle Scaling for domain shift correction (e.g. LEVIR-CD to LoveDA sizes)
+        # Handle Scaling for domain shift correction
         orig_h, orig_w = image_tensor.shape[2], image_tensor.shape[3]
         if scale_factor != 1.0:
             import torch.nn.functional as F
@@ -264,7 +264,6 @@ class SmartCityPipeline:
             new_w = int(orig_w * scale_factor)
             
             # SemanticFPN uses ResNet50, which has a 32x downsampling backbone.
-            # Input sizes MUST be exactly divisible by 32 to avoid tensor dimension mismatches during FPN upsampling
             new_h = int(np.ceil(new_h / 32.0)) * 32
             new_w = int(np.ceil(new_w / 32.0)) * 32
             
@@ -282,8 +281,44 @@ class SmartCityPipeline:
                 
             seg_mask = seg_mask_tensor.squeeze().numpy().astype(np.int32)  # H x W
         
-        # Run spatial analysis on the mathematically true mask
+        # Run spatial analysis on the mask
         return self.analyze_mask(seg_mask)
+
+    def _post_process_mask(self, mask: np.ndarray, original_img: np.ndarray, probs: np.ndarray = None) -> np.ndarray:
+        """
+        Apply advanced spectral and structural priors. 
+        """
+        try:
+            from skimage.morphology import remove_small_objects, binary_closing, disk
+        except ImportError:
+            return mask
+
+        processed_mask = mask.copy()
+        
+        # Bridge road segments
+        road_mask = (processed_mask == 2)
+        if road_mask.any():
+            road_mask = binary_closing(road_mask, disk(4))
+            road_mask = remove_small_objects(road_mask, min_size=150)
+            processed_mask[processed_mask == 2] = 0
+            processed_mask[road_mask] = 2
+            
+        # Smooth buildings
+        building_mask = (processed_mask == 1)
+        if building_mask.any():
+            building_mask = binary_closing(building_mask, disk(3))
+            building_mask = remove_small_objects(building_mask, min_size=50)
+            processed_mask[processed_mask == 1] = 0
+            processed_mask[building_mask] = 1
+
+        # Global noise removal
+        for class_id in range(1, 8):
+            c_mask = (processed_mask == class_id)
+            if c_mask.any():
+                clean_c = remove_small_objects(c_mask, min_size=50)
+                processed_mask[c_mask & (~clean_c)] = 0
+
+        return processed_mask
 
     def answer_question(self, image_path_or_mask, question: str) -> VQAResult:
         """
@@ -350,15 +385,6 @@ class SmartCityPipeline:
     ) -> ChangeDetectionResult:
         """
         Compare two temporal satellite images and classify urban sprawl.
-        
-        Requires segmentation model weights.
-        
-        Args:
-            image_path_before: Path to the earlier satellite image (T₁).
-            image_path_after: Path to the later satellite image (T₂).
-        
-        Returns:
-            ChangeDetectionResult with sprawl classification and deltas.
         """
         self._ensure_change_detector()
         result_before = self.analyze_image(image_path_before)
@@ -375,13 +401,6 @@ class SmartCityPipeline:
     ) -> ChangeDetectionResult:
         """
         Compare two pre-computed segmentation masks and classify urban sprawl.
-        
-        Args:
-            mask_before: H x W segmentation mask from time T₁.
-            mask_after: H x W segmentation mask from time T₂.
-        
-        Returns:
-            ChangeDetectionResult with sprawl classification and deltas.
         """
         self._ensure_change_detector()
         result_before = self.analyze_mask(mask_before)
@@ -498,12 +517,18 @@ class SmartCityPipeline:
         img = Image.open(image_path).convert('RGB')
         img_np = np.array(img).astype(np.float32)
         
-        # Apply the same normalization as in LoveDA config
+        # ADAPTIVE CONTRAST STRETCHING (Fixes lighting/domain shift)
+        # We stretch the 2nd to 98th percentile to avoid outlier influence
+        for i in range(3):
+            low, high = np.percentile(img_np[:,:,i], (2, 98))
+            if high > low:
+                img_np[:,:,i] = np.clip((img_np[:,:,i] - low) / (high - low) * 255.0, 0, 255)
+        
+        # Standard Normalization (LoveDA constants)
         mean = np.array([123.675, 116.28, 103.53])
         std = np.array([58.395, 57.12, 57.375])
         img_np = (img_np - mean) / std
         
-        # Convert to tensor: [1, C, H, W]
         img_tensor = torch.from_numpy(img_np.transpose(2, 0, 1)).float().unsqueeze(0)
         return img_tensor
 
