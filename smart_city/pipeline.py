@@ -517,13 +517,6 @@ class SmartCityPipeline:
         img = Image.open(image_path).convert('RGB')
         img_np = np.array(img).astype(np.float32)
         
-        # ADAPTIVE CONTRAST STRETCHING (Fixes lighting/domain shift)
-        # We stretch the 2nd to 98th percentile to avoid outlier influence
-        for i in range(3):
-            low, high = np.percentile(img_np[:,:,i], (2, 98))
-            if high > low:
-                img_np[:,:,i] = np.clip((img_np[:,:,i] - low) / (high - low) * 255.0, 0, 255)
-        
         # Standard Normalization (LoveDA constants)
         mean = np.array([123.675, 116.28, 103.53])
         std = np.array([58.395, 57.12, 57.375])
