@@ -5,7 +5,6 @@ import {
   ShieldAlert, TreePine, Droplets, Building2, Route, CheckCircle2
 } from 'lucide-react';
 import axios from 'axios';
-import DeltaChart from './DeltaChart';
 
 // ─── Type Definitions ────────────────────────────────────────────────
 
@@ -264,11 +263,6 @@ export default function ChangeDetection() {
     setError(null);
   };
 
-  // Prepare chart data from delta features
-  const chartData = result?.delta_features?.feature_vector
-    ?.filter(f => Math.abs(f.value) > 0.0001 && !f.name.includes('Distance') && !f.name.includes('Count') && !f.name.includes('Density') && !f.name.includes('Connectivity') && !f.name.includes('Intersection'))
-    ?.map(f => ({ name: f.name, value: f.value })) || [];
-
   // Get sprawl style
   const sprawlStyle = result ? (SPRAWL_STYLES[result.sprawl_type] || SPRAWL_STYLES['Stable / No Change']) : null;
   const SprawlIcon = sprawlStyle?.icon || Minus;
@@ -459,12 +453,7 @@ export default function ChangeDetection() {
 
           {/* ── Delta Analysis Grid ── */}
           <section className="grid md:grid-cols-3 gap-6 items-start">
-            {/* Delta Bar Chart */}
             <div className="md:col-span-2 space-y-6">
-              <div className="p-6 rounded-2xl bg-slate-800/40 backdrop-blur-xl border border-slate-700/50">
-                <DeltaChart data={chartData} title="Land-Use Change (Δ)" />
-              </div>
-
               {/* Delta Table */}
               {result.features_before?.area_coverage && result.features_after?.area_coverage && (
                 <div className="p-6 rounded-2xl bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 overflow-x-auto">
@@ -495,23 +484,7 @@ export default function ChangeDetection() {
               )}
             </div>
 
-            {/* Recommendations */}
             <div className="space-y-6">
-              <div className={`p-6 rounded-2xl ${sprawlStyle.bg} border ${sprawlStyle.border} backdrop-blur-xl`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <ShieldAlert size={18} className={sprawlStyle.text} />
-                  <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-widest">AI Recommendations</h3>
-                </div>
-                <ul className="space-y-3">
-                  {result.recommendations.map((rec, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300 leading-relaxed">
-                      <span className={`mt-1.5 w-1.5 h-1.5 rounded-full ${sprawlStyle.text.replace('text-', 'bg-')} shrink-0`} />
-                      {rec}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
               {/* Summary Stats */}
               <div className="p-5 rounded-2xl bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 space-y-4">
                 <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Key Metrics</h3>

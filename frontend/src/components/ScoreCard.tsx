@@ -6,10 +6,9 @@ interface ScoreCardProps {
   label: string; // e.g. "Needs Improvement"
   severity: string;
   icon: LucideIcon;
-  recommendation: string;
 }
 
-export default function ScoreCard({ title, score, label, severity, icon: Icon, recommendation }: ScoreCardProps) {
+export default function ScoreCard({ title, score, label, severity, icon: Icon }: ScoreCardProps) {
   // Determine color based on severity
   let color = 'text-green-400';
   let bg = 'bg-green-400/10';
@@ -73,9 +72,6 @@ export default function ScoreCard({ title, score, label, severity, icon: Icon, r
         />
       </div>
 
-      <div className="mt-4 p-3 rounded-xl bg-slate-900/50 border border-slate-800/50 text-sm text-slate-400 leading-relaxed">
-        {recommendation}
-      </div>
     </div>
   );
 }
