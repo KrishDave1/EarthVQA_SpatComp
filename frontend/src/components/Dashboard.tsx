@@ -6,13 +6,13 @@ import axios from 'axios';
 
 const LEGEND = [
   { name: 'Building', color: 'bg-[#ff0000]' },
-  { name: 'Road', color: 'bg-[#808080]' },
+  { name: 'Road', color: 'bg-[#ffff00]' },
   { name: 'Water', color: 'bg-[#0000ff]' },
-  { name: 'Barren', color: 'bg-[#8b7765]' },
-  { name: 'Forest', color: 'bg-[#008000]' },
-  { name: 'Agriculture', color: 'bg-[#ffa500]' },
-  { name: 'Playground', color: 'bg-[#00ffff]' },
-  { name: 'Background', color: 'bg-black' }
+  { name: 'Barren', color: 'bg-[#9f81b7]' },
+  { name: 'Forest', color: 'bg-[#00ff00]' },
+  { name: 'Agriculture', color: 'bg-[#ffc380]' },
+  { name: 'Playground', color: 'bg-[#a500a5]' },
+  { name: 'Background', color: 'bg-[#ffffff]' }
 ];
 
 interface PlanningReport {
